@@ -22,6 +22,38 @@ class Contact {
         this.email = email;
     }
 
+	public String getFirstName() {
+        return firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+	
+	 public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+	
+	public void setState(String state) {
+		this.state = state;
+	}
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
+    public void setZip(String zip) {
+        this.zip = zip;
+    }
+
 	public void display() {
         System.out.println("Name: " + firstName + " " + lastName);
         System.out.println("Address: " + address + ", " + city + ", " + state + " - " + zip);
@@ -83,6 +115,39 @@ class AddressBook {
 		this.addContact(newContact);
     }
 
+	public void editContact(Scanner sc) {
+		System.out.println("Enter the name of the contact to edit:");
+
+        System.out.print("First Name: ");
+        String firstName = sc.nextLine();
+
+        System.out.print("Last Name: ");
+        String lastName = sc.nextLine();
+
+        for (Contact contact : contacts) {
+            if (contact.getFirstName().equals(firstName) && contact.getLastName().equals(lastName)) 
+			{
+                System.out.print("Enter new address: ");
+                contact.setAddress(sc.nextLine());
+                System.out.print("Enter new city: ");
+                contact.setCity(sc.nextLine());
+                System.out.print("Enter new state: ");
+                contact.setState(sc.nextLine());
+                System.out.print("Enter new zip: ");
+                contact.setZip(sc.nextLine());
+                System.out.print("Enter new phone number: ");
+                contact.setPhoneNumber(sc.nextLine());
+                System.out.print("Enter new email: ");
+                contact.setEmail(sc.nextLine());
+
+                System.out.println("Contact updated successfully!");
+				contact.display();
+                return;
+            }
+        }
+        System.out.println("Contact not found!");
+    }
+
 	public static void main(String[] args) {
 
 		Scanner sc = new Scanner(System.in);
@@ -93,7 +158,8 @@ class AddressBook {
             System.out.println("\nMain Menu:");
             System.out.println("1. Add Contact");
             System.out.println("2. Display Contacts");
-            System.out.println("3. Exit");
+            System.out.println("3. Edit Contact");
+            System.out.println("4. Exit");
 
             System.out.print("Enter your choice: ");
             int choice = sc.nextInt();
@@ -106,11 +172,14 @@ class AddressBook {
                 case 2:
                     addressBook.displayContacts();
                     break;
-                case 3:
+				case 3:
+					addressBook.editContact(sc);
+                    break;
+                case 4:
                     System.out.println("Exiting Address Book CLI. Goodbye!");
                     System.exit(0);
                 default:
-                    System.out.println("Invalid choice. Please enter a number between 1 and 3.");
+                    System.out.println("Invalid choice. Please enter a number between 1 and 4.");
             }
 		}
 	}
