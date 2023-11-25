@@ -78,6 +78,11 @@ class AddressBook {
     }
 
 	public void displayContacts() {
+		if(contacts.size()==0)
+			System.out.println("No Contacts to display");
+		else
+			System.out.println("AddressBook Contacts:2");
+			
         for (Contact contact : contacts) {
             contact.display();
         }
@@ -148,6 +153,25 @@ class AddressBook {
         System.out.println("Contact not found!");
     }
 
+	public void deleteContact(Scanner sc) {
+		System.out.println("Enter the name of the contact to delete:");
+
+        System.out.print("First Name: ");
+        String firstName = sc.nextLine();
+
+        System.out.print("Last Name: ");
+        String lastName = sc.nextLine();
+
+        for (Contact contact : contacts) {
+            if (contact.getFirstName().equals(firstName) && contact.getLastName().equals(lastName)) {
+                contacts.remove(contact);
+                System.out.println("Contact deleted successfully!");
+                return;
+            }
+        }
+        System.out.println("Contact not found!");
+    }
+
 	public static void main(String[] args) {
 
 		Scanner sc = new Scanner(System.in);
@@ -159,7 +183,8 @@ class AddressBook {
             System.out.println("1. Add Contact");
             System.out.println("2. Display Contacts");
             System.out.println("3. Edit Contact");
-            System.out.println("4. Exit");
+            System.out.println("4. Delete Contact");
+            System.out.println("5. Exit");
 
             System.out.print("Enter your choice: ");
             int choice = sc.nextInt();
@@ -176,10 +201,13 @@ class AddressBook {
 					addressBook.editContact(sc);
                     break;
                 case 4:
+					addressBook.deleteContact(sc);
+                    break;
+                case 5:
                     System.out.println("Exiting Address Book CLI. Goodbye!");
                     System.exit(0);
                 default:
-                    System.out.println("Invalid choice. Please enter a number between 1 and 4.");
+                    System.out.println("Invalid choice. Please enter a number between 1 and 5.");
             }
 		}
 	}
