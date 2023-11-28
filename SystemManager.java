@@ -172,7 +172,7 @@ class AddressBook {
         System.out.println("Contact not found!");
     }
 
-	public static void main(String[] args) {
+	void bookSelected(){
 
 		Scanner sc = new Scanner(System.in);
 		System.out.println("Welcome to Address Book");
@@ -205,7 +205,7 @@ class AddressBook {
                     break;
                 case 5:
                     System.out.println("Exiting Address Book CLI. Goodbye!");
-                    System.exit(0);
+                    break;
                 default:
                     System.out.println("Invalid choice. Please enter a number between 1 and 5.");
             }
@@ -213,3 +213,69 @@ class AddressBook {
 	}
 }
 
+public class SystemManager {
+    private Map<String, AddressBook> addressBooks;
+
+    public SystemManager() {
+        this.addressBooks = new HashMap<>();
+    }
+
+    public void addAddressBook(String name) {
+        if (!addressBooks.containsKey(name)) {
+            addressBooks.put(name, new AddressBook());
+            System.out.println("Address book '" + name + "' added successfully!");
+        } else {
+            System.out.println("Address book with name '" + name + "' already exists!");
+        }
+    }
+
+    public AddressBook getAddressBook(String name) {
+        return addressBooks.get(name);
+    }
+
+	public static void displayOptions(SystemManager systemManager, Scanner sc){
+		System.out.println("\nMain Menu:");
+            System.out.println("1. Create Address Book");
+            System.out.println("2. Select Address Book");
+			System.out.println("3. Exit");
+
+            System.out.print("Enter your choice: ");
+            int choice = sc.nextInt();
+            sc.nextLine();
+
+            switch (choice) {
+                case 1:
+                    System.out.print("Enter name for new address book: ");
+                    String newName = sc.nextLine();
+                    systemManager.addAddressBook(newName);
+                    break;
+                case 2:
+                    System.out.print("Enter name of address book: ");
+                    String selectedName = sc.nextLine();
+                    AddressBook selectedAddressBook = systemManager.getAddressBook(selectedName);
+                    if (selectedAddressBook != null) {
+                             selectedAddressBook.bookSelected();
+                    } else {
+                        System.out.println("Address book with name '" + selectedName + "' not found!");
+                    }
+                    break;
+                // Add more cases for managing address books
+				case 3:
+                    System.out.println("Exiting System.");
+					System.exit(0);
+					break;
+                default:
+                    System.out.println("Invalid choice. Please enter a valid option.");
+            }
+	}
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        System.out.println("Welcome to Address Book System");
+        SystemManager systemManager = new SystemManager();
+
+        while (true) {
+            displayOptions(systemManager, sc);
+        }
+    }
+}
