@@ -71,17 +71,24 @@ class AddressBook {
         this.contacts = new ArrayList<>();
     }
 
-    public void addContact(Contact contact) {
-        contacts.add(contact);
+    public void addContact(Contact newContact) {
+		// UC6 Check duplicate contact
+		for (Contact contact : contacts) {
+            if (contact.getFirstName().equals(newContact.getFirstName()) && contact.getLastName().equals(newContact.getLastName())) {
+				System.out.println("Person already exists, try updating");
+				return;
+			}
+		}
+        contacts.add(newContact);
         System.out.println("Contact added successfully!");
-		contact.display();
+		newContact.display();
     }
 
 	public void displayContacts() {
 		if(contacts.size()==0)
 			System.out.println("No Contacts to display");
 		else
-			System.out.println("AddressBook Contacts:2");
+			System.out.println("***********************\nAddressBook Contacts\n***********************\n\n");
 			
         for (Contact contact : contacts) {
             contact.display();
@@ -187,8 +194,16 @@ class AddressBook {
             System.out.println("5. Exit");
 
             System.out.print("Enter your choice: ");
-            int choice = sc.nextInt();
-            sc.nextLine(); 
+			int choice = -1;
+			while(choice == -1){
+				String input = sc.nextLine();
+				try {
+					choice = Integer.parseInt(input);
+				} catch (NumberFormatException e) {
+					System.out.println("Enter valid input");
+					continue;
+				}
+			}
 
 			switch (choice) {
                 case 1:
@@ -205,7 +220,7 @@ class AddressBook {
                     break;
                 case 5:
                     System.out.println("Exiting Address Book CLI. Goodbye!");
-                    break;
+                    return;
                 default:
                     System.out.println("Invalid choice. Please enter a number between 1 and 5.");
             }
@@ -240,8 +255,16 @@ public class SystemManager {
 			System.out.println("3. Exit");
 
             System.out.print("Enter your choice: ");
-            int choice = sc.nextInt();
-            sc.nextLine();
+            int choice = -1;
+			while(choice == -1){
+				String input = sc.nextLine();
+				try {
+					choice = Integer.parseInt(input);
+				} catch (NumberFormatException e) {
+					System.out.println("Enter valid input");
+					continue;
+				}
+			}
 
             switch (choice) {
                 case 1:
