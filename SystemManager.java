@@ -1,4 +1,8 @@
 import java.util.*;
+import java.util.Map;
+import java.util.List;
+import java.util.HashMap;
+import java.util.stream.Collectors;
 
 class Contact {
 	private String firstName;
@@ -28,6 +32,14 @@ class Contact {
 
     public String getLastName() {
         return lastName;
+    }
+    
+	public String getCity() {
+        return city;
+    }
+	
+	public String getState() {
+        return state;
     }
 	
 	 public void setAddress(String address) {
@@ -63,27 +75,27 @@ class Contact {
     }
 }
 
+
 class AddressBook {
+    private ArrayList<Contact> contacts;
 
-	private ArrayList<Contact> contacts;
-
-	public AddressBook() {
+    public AddressBook() {
         this.contacts = new ArrayList<>();
     }
 
     public void addContact(Contact newContact) {
-		// UC6 Check duplicate contact
-		for (Contact contact : contacts) {
-            if (contact.getFirstName().equals(newContact.getFirstName()) && contact.getLastName().equals(newContact.getLastName())) {
-				System.out.println("Person already exists, try updating");
-				return;
-			}
-		}
+        for (Contact contact : contacts) {
+            if (contact.getFirstName().equals(newContact.getFirstName()) &&
+                    contact.getLastName().equals(newContact.getLastName())) {
+                System.out.println("Person already exists, try updating");
+                return;
+            }
+        }
         contacts.add(newContact);
         System.out.println("Contact added successfully!");
-		newContact.display();
+        newContact.display();
     }
-
+	
 	public void displayContacts() {
 		if(contacts.size()==0)
 			System.out.println("No Contacts to display");
@@ -183,7 +195,6 @@ class AddressBook {
 
 		Scanner sc = new Scanner(System.in);
 		System.out.println("Welcome to Address Book");
-		AddressBook addressBook = new AddressBook();
 
 		while (true) {
             System.out.println("\nMain Menu:");
@@ -191,7 +202,9 @@ class AddressBook {
             System.out.println("2. Display Contacts");
             System.out.println("3. Edit Contact");
             System.out.println("4. Delete Contact");
-            System.out.println("5. Exit");
+            System.out.println("5. View Contacts from a City");
+            System.out.println("6. View Contacts from a State");
+            System.out.println("7. Exit");
 
             System.out.print("Enter your choice: ");
 			int choice = -1;
@@ -207,32 +220,68 @@ class AddressBook {
 
 			switch (choice) {
                 case 1:
-                    addressBook.createContact(sc);
+                    this.createContact(sc);
                     break;
                 case 2:
-                    addressBook.displayContacts();
+                    this.displayContacts();
                     break;
 				case 3:
-					addressBook.editContact(sc);
+					this.editContact(sc);
                     break;
                 case 4:
-					addressBook.deleteContact(sc);
+					this.deleteContact(sc);
                     break;
                 case 5:
+                    System.out.print("Enter city to view persons: ");
+                    String city = sc.nextLine();
+                    List<Contact> personsByCity = this.getPersonsByCity(city);
+                    if (!personsByCity.isEmpty()) {
+                        System.out.println("Persons in " + city + ":");
+                        personsByCity.forEach(Contact::display);
+                    } else {
+                        System.out.println("No persons found in " + city);
+                    }
+                    break;
+                case 6:
+                    System.out.print("Enter state to view persons: ");
+                    String state = sc.nextLine();
+                    List<Contact> personsByState = this.getPersonsByState(state);
+                    if (!personsByState.isEmpty()) {
+                        System.out.println("Persons in " + state + ":");
+                        personsByState.forEach(Contact::display);
+                    } else {
+                        System.out.println("No persons found in " + state);
+                    }
+                    break;
+                case 7:
                     System.out.println("Exiting Address Book CLI. Goodbye!");
                     return;
                 default:
-                    System.out.println("Invalid choice. Please enter a number between 1 and 5.");
+                    System.out.println("Invalid choice. Please enter a number between 1 and 7.");
             }
-		}
-	}
+        }
+    }
+
+    public List<Contact> getPersonsByCity(String city) {
+        return contacts.stream()
+                .filter(contact -> contact.getCity().equalsIgnoreCase(city))
+                .collect(Collectors.toList());
+    }
+
+    public List<Contact> getPersonsByState(String state) {
+        return contacts.stream()
+                .filter(contact -> contact.getState().equalsIgnoreCase(state))
+                .collect(Collectors.toList());
+    }
 }
 
 public class SystemManager {
     private Map<String, AddressBook> addressBooks;
+    private AddressBook currentAddressBook; 
 
     public SystemManager() {
         this.addressBooks = new HashMap<>();
+        this.currentAddressBook = null;
     }
 
     public void addAddressBook(String name) {
@@ -244,15 +293,29 @@ public class SystemManager {
         }
     }
 
-    public AddressBook getAddressBook(String name) {
+    public void setCurrentAddressBook(String name) {
+        if (addressBooks.containsKey(name)) {
+            currentAddressBook = addressBooks.get(name);
+            System.out.println("Address book '" + name + "' selected.");
+        } else {
+            System.out.println("Address book with name '" + name + "' not found!");
+        }
+    }
+
+    public AddressBook getCurrentAddressBook() {
+        return currentAddressBook;
+    }
+
+	public AddressBook getAddressBook(String name) {
         return addressBooks.get(name);
     }
 
-	public static void displayOptions(SystemManager systemManager, Scanner sc){
+    public void displayOptions(SystemManager systemManager, Scanner sc){
 		System.out.println("\nMain Menu:");
             System.out.println("1. Create Address Book");
-            System.out.println("2. Select Address Book");
-			System.out.println("3. Exit");
+            System.out.println("2. View all Address Books");
+            System.out.println("3. Select Address Book");
+			System.out.println("4. Exit");
 
             System.out.print("Enter your choice: ");
             int choice = -1;
@@ -273,6 +336,10 @@ public class SystemManager {
                     systemManager.addAddressBook(newName);
                     break;
                 case 2:
+					for(String ab : addressBooks.keySet())
+						System.out.println("# "+ ab);
+					break;
+                case 3:
                     System.out.print("Enter name of address book: ");
                     String selectedName = sc.nextLine();
                     AddressBook selectedAddressBook = systemManager.getAddressBook(selectedName);
@@ -282,8 +349,7 @@ public class SystemManager {
                         System.out.println("Address book with name '" + selectedName + "' not found!");
                     }
                     break;
-                // Add more cases for managing address books
-				case 3:
+				case 4:
                     System.out.println("Exiting System.");
 					System.exit(0);
 					break;
@@ -298,7 +364,8 @@ public class SystemManager {
         SystemManager systemManager = new SystemManager();
 
         while (true) {
-            displayOptions(systemManager, sc);
+            systemManager.displayOptions(systemManager, sc);
         }
     }
+    // Display options and other methods remain the same
 }
