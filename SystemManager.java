@@ -263,15 +263,17 @@ class AddressBook {
     }
 
     public List<Contact> getPersonsByCity(String city) {
-        return contacts.stream()
-                .filter(contact -> contact.getCity().equalsIgnoreCase(city))
-                .collect(Collectors.toList());
+        List<Contact> people = contacts.stream().filter(contact -> contact.getCity().equalsIgnoreCase(city)).collect(Collectors.toList());
+		int num = people.size();
+		System.out.println("Number of people in " + city +": " + num);
+		return people;
     }
 
     public List<Contact> getPersonsByState(String state) {
-        return contacts.stream()
-                .filter(contact -> contact.getState().equalsIgnoreCase(state))
-                .collect(Collectors.toList());
+        List<Contact> people = contacts.stream().filter(contact -> contact.getState().equalsIgnoreCase(state)).collect(Collectors.toList());
+		int num = people.size();
+		System.out.println("Number of people in " + state + ": " + num);
+		return people;
     }
 }
 
@@ -367,5 +369,4 @@ public class SystemManager {
             systemManager.displayOptions(systemManager, sc);
         }
     }
-    // Display options and other methods remain the same
 }
